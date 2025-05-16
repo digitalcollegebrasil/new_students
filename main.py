@@ -98,7 +98,7 @@ chrome_options.add_experimental_option("prefs", prefs)
 chrome_options.add_argument("--start-maximized")
 
 driver = webdriver.Chrome(options=chrome_options)
-driver.get("https://www.sponteeducacional.net.br/SPRel/Alunos/DadosCadastro.aspx")
+driver.get("https://www.sponteeducacional.net.br/Home.aspx")
 
 def clicar_checkbox(driver, checkbox_id):
     checkbox = driver.find_element(By.ID, checkbox_id)
@@ -129,7 +129,7 @@ try:
     print("Botão de login clicado.")
     time.sleep(5)
 
-    enterprise = driver.find_element(By.ID, "ctl00_ctl00_spnNomeEmpresa").get_attribute("innerText").strip().replace(" ", "")
+    enterprise = driver.find_element(By.ID, "ctl00_spnNomeEmpresa").get_attribute("innerText").strip().replace(" ", "")
     print(enterprise)
 
     combinacoes = {
@@ -149,50 +149,12 @@ try:
 
     print(message)
 
-    checkboxes = {
-        "Aldeota": "ctl00_ctl00_ContentPlaceHolder1_cblEmpresas_0",
-        "Sul": "ctl00_ctl00_ContentPlaceHolder1_cblEmpresas_1",
-        "Bezerra": "ctl00_ctl00_ContentPlaceHolder1_cblEmpresas_2",
-        "DIGITALCOLLEGEALDEOTA-72546": "ctl00_ctl00_ContentPlaceHolder1_cblEmpresas_0",
-        "DIGITALCOLLEGESUL-74070": "ctl00_ctl00_ContentPlaceHolder1_cblEmpresas_1",
-        "DIGITALCOLLEGEBEZERRADEMENEZES-488365": "ctl00_ctl00_ContentPlaceHolder1_cblEmpresas_2"
-    }
+    if val is not None:
+        driver.execute_script(f"$('#ctl00_hdnEmpresa').val({val});javascript:__doPostBack('ctl00$lnkChange','');")
+        time.sleep(3)
 
-    sedes_iguais = [
-        ("Aldeota", "DIGITALCOLLEGEALDEOTA-72546"),
-        ("Sul", "DIGITALCOLLEGESUL-74070"),
-        ("Bezerra", "DIGITALCOLLEGEBEZERRADEMENEZES-488365")
-    ]
-    
-    if (head_office, enterprise) in [("Aldeota", "DIGITALCOLLEGEALDEOTA-72546"),
-                                  ("Sul", "DIGITALCOLLEGESUL-74070"),
-                                  ("Bezerra", "DIGITALCOLLEGEBEZERRADEMENEZES-488365")]:
-        print(f"O script já está na sede {head_office}. Nenhuma ação será tomada.")
-    else:
-        key = (head_office, enterprise)
-        
-        if key in combinacoes:
-            action, message = combinacoes[key]
-            print(message)
-            if action:
-                empresas_button = driver.find_element(By.ID, "ctl00_ctl00_ContentPlaceHolder1_liEmpresas")
-                empresas_button.click()
-                time.sleep(2)
-                
-                driver.execute_script("arguments[0].scrollIntoView();", empresas_button)
-
-                clicar_checkbox(driver, checkboxes[head_office])
-                clicar_checkbox(driver, checkboxes[head_office])
-                clicar_checkbox(driver, checkboxes[enterprise])
-            ul_element = driver.find_element(By.CSS_SELECTOR, 'ul.nav.nav-pills')
-            li_elements = ul_element.find_elements(By.TAG_NAME, 'li')
-            if li_elements:
-                li_elements[0].click()
-            else:
-                print("Nenhum elemento <li> encontrado.")
-            time.sleep(2)
-        else:
-            print("Combinação inválida.")
+    driver.get("https://www.sponteeducacional.net.br/SPRel/Alunos/DadosCadastro.aspx")
+    time.sleep(5)
 
     combined_data = []
 
@@ -207,57 +169,6 @@ try:
                 continue
 
             if primeira_turma:
-                if head_office == "Aldeota":
-                    empresas_button = driver.find_element(By.ID, "ctl00_ctl00_ContentPlaceHolder1_liEmpresas")
-                    empresas_button.click()
-                    time.sleep(2)
-                    ul_element = driver.find_element(By.CSS_SELECTOR, 'ul.nav.nav-pills')
-                    li_elements = ul_element.find_elements(By.TAG_NAME, 'li')
-                    if li_elements:
-                        first_li = li_elements[0]
-                        first_li.click()
-                    else:
-                        print("Nenhum elemento <li> encontrado.")
-                    time.sleep(2)
-                    
-                elif head_office == "Sul":
-                    empresas_button = driver.find_element(By.ID, "ctl00_ctl00_ContentPlaceHolder1_liEmpresas")
-                    empresas_button.click()
-                    time.sleep(2)
-                    aldeota_checkbox = driver.find_element(By.ID, "ctl00_ctl00_ContentPlaceHolder1_cblEmpresas_0")
-                    aldeota_checkbox.click()
-                    time.sleep(3)
-                    sul_checkbox = driver.find_element(By.ID, "ctl00_ctl00_ContentPlaceHolder1_cblEmpresas_1")
-                    sul_checkbox.click()
-                    time.sleep(3)
-                    ul_element = driver.find_element(By.CSS_SELECTOR, 'ul.nav.nav-pills')
-                    li_elements = ul_element.find_elements(By.TAG_NAME, 'li')
-                    if li_elements:
-                        first_li = li_elements[0]
-                        first_li.click()
-                    else:
-                        print("Nenhum elemento <li> encontrado.")
-                    time.sleep(2)
-                
-                elif head_office == "Bezerra":
-                    empresas_button = driver.find_element(By.ID, "ctl00_ctl00_ContentPlaceHolder1_liEmpresas")
-                    empresas_button.click()
-                    time.sleep(2)
-                    aldeota_checkbox = driver.find_element(By.ID, "ctl00_ctl00_ContentPlaceHolder1_cblEmpresas_0")
-                    aldeota_checkbox.click()
-                    time.sleep(3)
-                    bezerra_checkbox = driver.find_element(By.ID, "ctl00_ctl00_ContentPlaceHolder1_cblEmpresas_2")
-                    bezerra_checkbox.click()
-                    time.sleep(3)
-                    ul_element = driver.find_element(By.CSS_SELECTOR, 'ul.nav.nav-pills')
-                    li_elements = ul_element.find_elements(By.TAG_NAME, 'li')
-                    if li_elements:
-                        first_li = li_elements[0]
-                        first_li.click()
-                    else:
-                        print("Nenhum elemento <li> encontrado.")
-                    time.sleep(2)
-
                 export_checkbox = WebDriverWait(driver, 10).until(
                     EC.element_to_be_clickable((By.ID, "ctl00_ctl00_ContentPlaceHolder1_chkExportar"))
                 )
